@@ -21,11 +21,19 @@
           source ${packages.path-of-building.env}
           exec ${packages.pobfrontend.out}/pobfrontend $@
         '';
+        wineLauncher = poe2pkg: pkgs.writeShellScript "poe2-wine-launcher" ''
+          set -e
+          export WINEDEBUG=-all
+          export WINEPREFIX="$HOME/.local/share/pob-poe2-wine"
+          cd ${poe2pkg.out}/runtime
+          exec ${pkgs.wineWowPackages.staging}/bin/wine "Path{space}of{space}Building-PoE2.exe"
+        '';
       in
       rec {
         packages = {
           pobfrontend = (import ./pobfrontend.nix) { inherit pkgs luaEnv; };
           path-of-building = (import ./path-of-building.nix) { inherit pkgs luaEnv; };
+          path-of-building-poe2 = (import ./path-of-building-poe2.nix) { inherit pkgs luaEnv; };
         };
 
         apps = {
@@ -36,6 +44,23 @@
           pobfrontend = {
             type = "app";
             program = "${packages.pobfrontend.out}/pobfrontend";
+          };
+          poe2 = {
+            type = "app";
+            program = "${wineLauncher packages.path-of-building-poe2}";
+          };
+          poe2-wine = {
+            type = "app";
+            program = "${wineLauncher packages.path-of-building-poe2}";
+          };
+          poe2-native = {
+            type = "app";
+            program = let
+              poe2Packages = {
+                pobfrontend = packages.pobfrontend;
+                path-of-building = packages.path-of-building-poe2;
+              };
+            in "${launcher poe2Packages}";
           };
         };
 

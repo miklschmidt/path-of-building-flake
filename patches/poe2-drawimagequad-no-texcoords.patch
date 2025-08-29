@@ -1,0 +1,8 @@
+diff --git a/src/Classes/PassiveTreeView.lua b/src/Classes/PassiveTreeView.lua
+index 1111111..2222222 100644
+--- a/src/Classes/PassiveTreeView.lua
++++ b/src/Classes/PassiveTreeView.lua
+@@
+-		vertActive[9] = data[1] -- s1
++		-- Removed extra texture coordinate to match frontend expectations
++		-- vertActive[9] = data[1] -- s1

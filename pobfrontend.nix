@@ -11,6 +11,11 @@ pkgs.stdenv.mkDerivation rec {
     sha256 = "1r643arglx0wzszjlgw0mcdx3k6a0lfdsdhfi9xiy9lmp12h99yi";
   };
 
+  patches = [
+    ./patches/pobfrontend-drawimage-table.patch
+    ./patches/pobfrontend-drawimagequad-table.patch
+  ];
+
   buildInputs = with pkgs; [
     meson
     ninja

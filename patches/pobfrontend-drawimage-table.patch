@@ -1,0 +1,41 @@
+--- a/src/lua_cb_gfx.cpp	2025-08-29 19:17:37.965562028 +0200
++++ b/src/lua_cb_gfx.cpp	2025-08-29 19:17:37.995563066 +0200
+@@ -250,12 +250,33 @@
+     }
+     float arg[8];
+     if (n > 5) {
+-        LAssert(L, n >= 9, "DrawImage(): incomplete set of texture coordinates provided");
+-        for (int i = 2; i <= 9; i++) {
+-            LAssert(L, lua_isnumber(L, i), "DrawImage() argument %d: expected number, got %t", i, i);
+-            arg[i-2] = (float)lua_tonumber(L, i);
++        if (lua_istable(L, 6)) {
++            // Support DrawImage(img, x, y, w, h, tcTable)
++            for (int i = 2; i <= 5; i++) {
++                LAssert(L, lua_isnumber(L, i), "DrawImage() argument %d: expected number, got %t", i, i);
++                arg[i-2] = (float)lua_tonumber(L, i);
++            }
++            for (int i = 1; i <= 4; i++) {
++                lua_rawgeti(L, 6, i);
++                LAssert(L, lua_isnumber(L, -1), "DrawImage() texture coord table: expected number");
++                arg[3 + i] = (float)lua_tonumber(L, -1);
++                lua_pop(L, 1);
++            }
++            pobwindow->AppendCmd(std::make_unique<DrawImageCmd>(tex_idx, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7]));
++        } else if (n >= 9) {
++            for (int i = 2; i <= 9; i++) {
++                LAssert(L, lua_isnumber(L, i), "DrawImage() argument %d: expected number, got %t", i, i);
++                arg[i-2] = (float)lua_tonumber(L, i);
++            }
++            pobwindow->AppendCmd(std::make_unique<DrawImageCmd>(tex_idx, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7]));
++        } else {
++            // Fallback: treat as call without texture coordinates
++            for (int i = 2; i <= 5; i++) {
++                LAssert(L, lua_isnumber(L, i), "DrawImage() argument %d: expected number, got %t", i, i);
++                arg[i-2] = (float)lua_tonumber(L, i);
++            }
++            pobwindow->AppendCmd(std::make_unique<DrawImageCmd>(tex_idx, arg[0], arg[1], arg[2], arg[3]));
+         }
+-        pobwindow->AppendCmd(std::make_unique<DrawImageCmd>(tex_idx, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7]));
+     } else {
+         for (int i = 2; i <= 5; i++) {
+             LAssert(L, lua_isnumber(L, i), "DrawImage() argument %d: expected number, got %t", i, i);
