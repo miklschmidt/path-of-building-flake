@@ -43,6 +43,6 @@ nix build .#path-of-building-poe2
 
 ## Contributions and fixes
 
-This Flake has been tested only on macOS. Contributions and fixes for other platforms are welcome.
+This Flake has been tested on macOS and NixOS. Contributions and fixes for other platforms are welcome.
 PoE2 on Linux currently renders incorrectly in the native frontend; use the Wine app (#poe2) until upstream fixes it. Automatic update checks are disabled in both (PoE1 and PoE2) for reproducibility.
 Feel free to open issues and submit pull requests.
