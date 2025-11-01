@@ -21,7 +21,7 @@ pkgs.stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/runtime
-    cp -r runtime/lua/ $out/runtime/lua
+    cp -r runtime/* $out/runtime/
     cp -r spec/ $out/spec
     cp -r src/ $out/src
 

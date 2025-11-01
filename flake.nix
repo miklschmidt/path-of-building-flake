@@ -15,18 +15,19 @@
           luacurl
           luautf8
         ]);
-        launcher = packages: pkgs.writeShellScript "launcher" ''
+        nativeLauncher = packages: pkgs.writeShellScript "pob-native-launcher" ''
           set -e
           cd ${packages.path-of-building.out}
           source ${packages.path-of-building.env}
           exec ${packages.pobfrontend.out}/pobfrontend $@
         '';
-        wineLauncher = poe2pkg: pkgs.writeShellScript "poe2-wine-launcher" ''
+        wineLauncher = { pkg, exe, prefix, scriptName ? "pob-wine-launcher" }:
+          pkgs.writeShellScript scriptName ''
           set -e
           export WINEDEBUG=-all
-          export WINEPREFIX="$HOME/.local/share/pob-poe2-wine"
-          cd ${poe2pkg.out}/runtime
-          exec ${pkgs.wineWowPackages.staging}/bin/wine "Path{space}of{space}Building-PoE2.exe"
+          export WINEPREFIX="${prefix}"
+          cd ${pkg.out}/runtime
+          exec ${pkgs.wineWowPackages.staging}/bin/wine "${exe}"
         '';
       in
       rec {
@@ -36,10 +37,31 @@
           path-of-building-poe2 = (import ./path-of-building-poe2.nix) { inherit pkgs luaEnv; };
         };
 
-        apps = {
+        apps = let
+          pobWineProgram = "${wineLauncher {
+            pkg = packages.path-of-building;
+            exe = "Path{space}of{space}Building.exe";
+            prefix = "$HOME/.local/share/pob-wine";
+            scriptName = "pob-wine-launcher";
+          }}";
+          poe2WineProgram = "${wineLauncher {
+            pkg = packages.path-of-building-poe2;
+            exe = "Path{space}of{space}Building-PoE2.exe";
+            prefix = "$HOME/.local/share/pob-poe2-wine";
+            scriptName = "poe2-wine-launcher";
+          }}";
+        in {
           default = {
             type = "app";
-            program = "${launcher packages}";
+            program = pobWineProgram;
+          };
+          pob-wine = {
+            type = "app";
+            program = pobWineProgram;
+          };
+          pob-native = {
+            type = "app";
+            program = "${nativeLauncher packages}";
           };
           pobfrontend = {
             type = "app";
@@ -47,11 +69,11 @@
           };
           poe2 = {
             type = "app";
-            program = "${wineLauncher packages.path-of-building-poe2}";
+            program = poe2WineProgram;
           };
           poe2-wine = {
             type = "app";
-            program = "${wineLauncher packages.path-of-building-poe2}";
+            program = poe2WineProgram;
           };
           poe2-native = {
             type = "app";
@@ -60,7 +82,7 @@
                 pobfrontend = packages.pobfrontend;
                 path-of-building = packages.path-of-building-poe2;
               };
-            in "${launcher poe2Packages}";
+            in "${nativeLauncher poe2Packages}";
           };
         };
 
