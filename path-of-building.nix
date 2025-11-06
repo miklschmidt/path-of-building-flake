@@ -1,8 +1,11 @@
-{ pkgs, luaEnv }:
+{
+  pkgs,
+  luaEnv,
+}:
 
 pkgs.stdenv.mkDerivation rec {
   pname = "path-of-building";
-  version = "2.57.0";
+  version = "2.58.1";
   name = "path-of-building-${version}";
   outputs = [
     "out"
@@ -11,7 +14,8 @@ pkgs.stdenv.mkDerivation rec {
 
   src = fetchTarball {
     url = "https://github.com/PathOfBuildingCommunity/PathOfBuilding/archive/refs/tags/v${version}.tar.gz";
-    sha256 = "1f63r153qnzyqxqfrd77y85vxrxlyzmk2gw8myipdrmk6bghpgr4";
+    # sha256 = pkgs.lib.fakeSha256;
+    sha256 = "1j7zjm10qyz47r2xh5wz2sh07b69hsrv30x7mdhyr5kbalgf518n";
   };
   patches = [ ./patches/pob-stop-updates.patch ];
 
