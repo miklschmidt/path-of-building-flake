@@ -76,7 +76,7 @@
             export WINEDEBUG=-all
             export WINEPREFIX="${prefix}"
             cd ${pkg.out}/runtime
-            exec ${pkgs.wineWowPackages.staging}/bin/wine "${exe}" "$@"
+            exec ${pkgs.wineWow64Packages.staging}/bin/wine "${exe}" "$@"
           '';
         urlHandlerDesktopEntry =
           {
