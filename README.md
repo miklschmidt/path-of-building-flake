@@ -21,6 +21,21 @@ nix run github:ciiol/path-of-building-flake#poe2
 nix run github:ciiol/path-of-building-flake#poe2-wine
 ```
 
+For NixOS, register build-link URL handlers by importing the flake modules in
+your system configuration:
+
+```nix
+{
+  imports = [
+    # pob:// links for Path of Building (PoE1)
+    inputs.path-of-building-flake.nixosModules.pob-url-handler
+
+    # pob2:// links for Path of Building PoE2, for example pob2://poeninja/1cc44
+    inputs.path-of-building-flake.nixosModules.pob2-url-handler
+  ];
+}
+```
+
 ### Local development
 
 ```sh
