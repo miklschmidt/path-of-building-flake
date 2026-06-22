@@ -2,7 +2,7 @@
 
 pkgs.stdenv.mkDerivation rec {
   pname = "path-of-building-poe2";
-  version = "0.19.0";
+  version = "0.21.0";
   name = "path-of-building-poe2-${version}";
   outputs = [
     "out"
@@ -11,7 +11,7 @@ pkgs.stdenv.mkDerivation rec {
 
   src = fetchTarball {
     url = "https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/archive/refs/tags/v${version}.tar.gz";
-    sha256 = "12lf00149j2fqyi4p6y7yi2fsz1d9ii6sys0x0pvngpbm8qaylad";
+    sha256 = "158sdggwq8mdiiczwzwrwqc7wk33mxh9i99jqvhqjn23p0by7qf8";
   };
 
   patches = [
